@@ -91,31 +91,12 @@ func TestParser_ParseStatement(t *testing.T) {
 			}},
 		},
 
-		/*
-			// Multi-field statement
-			{
-				s: `SELECT first_name, last_name, age FROM my_table`,
-				stmt: &ql.Block{
-					Fields:    []string{"first_name", "last_name", "age"},
-					TableName: "my_table",
-				},
-			},
-
-			// Select all statement
-			{
-				s: `SELECT * FROM my_table`,
-				stmt: &ql.Block{
-					Fields:    []string{"*"},
-					TableName: "my_table",
-				},
-			},
-
-			// Errors
-			{s: `foo`, err: `found "foo", expected SELECT`},
-			{s: `SELECT !`, err: `found "!", expected field`},
-			{s: `SELECT field xxx`, err: `found "xxx", expected FROM`},
-			{s: `SELECT field FROM *`, err: `found "*", expected table name`},
-		*/
+		// Errors
+		{s: `foo`, err: `found "foo", expected LEFT_CURLY`},
+		{s: `{`, err: `found "", expected IDENT`},
+		{s: `{ u`, err: `found "", expected COMMA or RIGHT_CURLY`},
+		{s: `{ foo bar }`, err: `found "bar", expected COMMA or RIGHT_CURLY`},
+		{s: `{ user(id:) }`, err: `found ")", expected BOOLEAN, STRING, INT or FLOAT`},
 	}
 
 	for i, tt := range tests {
