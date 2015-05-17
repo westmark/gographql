@@ -1,7 +1,6 @@
 package gographql_test
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -89,9 +88,7 @@ func TestParser_ParseStatement(t *testing.T) {
 		block, err := ql.NewParser(strings.NewReader(tt.s)).Parse()
 		if !reflect.DeepEqual(tt.err, errstring(err)) {
 			t.Errorf("%d. %q: error mismatch:\n  exp=%s\n  got=%s\n\n", i, tt.s, tt.err, err)
-		} else if tt.err == "" && !reflect.DeepEqual(tt.block, block) {
-			printBlock(tt.block)
-			printBlock(block)
+		} else if tt.err == "" && !compareBlocks(tt.block, block) {
 			t.Errorf("%d. %q\n\nstmt mismatch:\n\nexp=%#v\n\ngot=%#v\n\n", i, tt.s, tt.block, block)
 		}
 	}
@@ -105,23 +102,63 @@ func errstring(err error) string {
 	return ""
 }
 
-func printBlock(block *ql.Block) {
-	fmt.Println("<block>")
-	for _, field := range block.Fields {
-		fmt.Println(field.Key)
-		if field.Model != nil {
-			fmt.Println(field.Model.Key)
+func compareQueryArgs(a, b *ql.QueryArg) bool {
+	if a == nil && b != nil || a != nil && b == nil {
+		return false
+	}
+	return (a.Key == b.Key && a.Value == b.Value)
+}
 
-			for _, qa := range field.Model.QueryArgs {
-				fmt.Print(qa.Key + " ")
-				fmt.Println(qa.Value)
-				_, ok := qa.Value.(int64)
-				fmt.Println(ok)
-			}
+func compareModels(a, b *ql.Model) bool {
+	if a == nil && b != nil || a != nil && b == nil {
+		return false
+	}
 
-			if field.Model.Block != nil {
-				printBlock(field.Model.Block)
-			}
+	if a == b {
+		return true
+	}
+
+	if len(a.QueryArgs) != len(b.QueryArgs) {
+		return false
+	}
+
+	for i := range a.QueryArgs {
+		if !compareQueryArgs(a.QueryArgs[i], b.QueryArgs[i]) {
+			return false
 		}
 	}
+
+	return compareBlocks(a.Block, b.Block)
+}
+
+func compareFields(a, b *ql.Field) bool {
+
+	if a.Key != b.Key {
+		return false
+	}
+
+	return compareModels(a.Model, b.Model)
+}
+
+func compareBlocks(a, b *ql.Block) bool {
+
+	if a == nil && b != nil || a != nil && b == nil {
+		return false
+	}
+
+	if a == b {
+		return true
+	}
+
+	if len(a.Fields) != len(b.Fields) {
+		return false
+	}
+
+	for i := range a.Fields {
+		if !compareFields(a.Fields[i], b.Fields[i]) {
+			return false
+		}
+	}
+
+	return true
 }
