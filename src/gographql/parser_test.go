@@ -57,6 +57,40 @@ func TestParser_ParseStatement(t *testing.T) {
 			}},
 		},
 
+		{
+			s: `{
+        foo,
+        bar,
+        user(id:1) {
+					name,
+					age
+				},
+				store(address:"street", zip:"1337", active:true) {}
+
+      }`,
+			block: &ql.Block{Fields: []*ql.Field{
+				&ql.Field{Key: "foo"},
+				&ql.Field{Key: "bar"},
+				&ql.Field{Key: "user", Model: &ql.Model{
+					Key:       "user",
+					QueryArgs: []*ql.QueryArg{&ql.QueryArg{Key: "id", Value: int64(1)}},
+					Block: &ql.Block{Fields: []*ql.Field{
+						&ql.Field{Key: "name"},
+						&ql.Field{Key: "age"},
+					}},
+				}},
+				&ql.Field{Key: "store", Model: &ql.Model{
+					Key: "store",
+					QueryArgs: []*ql.QueryArg{
+						&ql.QueryArg{Key: "address", Value: "street"},
+						&ql.QueryArg{Key: "zip", Value: "1337"},
+						&ql.QueryArg{Key: "active", Value: true},
+					},
+					Block: &ql.Block{Fields: []*ql.Field{}},
+				}},
+			}},
+		},
+
 		/*
 			// Multi-field statement
 			{
@@ -106,6 +140,7 @@ func compareQueryArgs(a, b *ql.QueryArg) bool {
 	if a == nil && b != nil || a != nil && b == nil {
 		return false
 	}
+
 	return (a.Key == b.Key && a.Value == b.Value)
 }
 
@@ -114,7 +149,7 @@ func compareModels(a, b *ql.Model) bool {
 		return false
 	}
 
-	if a == b {
+	if a == nil && b == nil {
 		return true
 	}
 
@@ -132,7 +167,6 @@ func compareModels(a, b *ql.Model) bool {
 }
 
 func compareFields(a, b *ql.Field) bool {
-
 	if a.Key != b.Key {
 		return false
 	}
@@ -141,12 +175,11 @@ func compareFields(a, b *ql.Field) bool {
 }
 
 func compareBlocks(a, b *ql.Block) bool {
-
 	if a == nil && b != nil || a != nil && b == nil {
 		return false
 	}
 
-	if a == b {
+	if a == nil && b == nil {
 		return true
 	}
 
