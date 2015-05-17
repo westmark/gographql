@@ -28,23 +28,46 @@ type Model struct {
 type Token int
 
 const (
-	// Special tokens
+	// ILLEGAL covers all illegal tokens
 	ILLEGAL Token = iota
+	// EOF - end-of-file
 	EOF
+	// WS - whitespace
 	WS
 
-	// Literals,
-	IDENT // field names
+	// Literals
+
+	// IDENT - Identifiers. Can also be booleans in the case of query args
+	IDENT
+	// STRING - string
 	STRING
+
+	// INT - int64
 	INT
+
+	// FLOAT - float64
 	FLOAT
+
+	// BOOLEAN - booleancs
 	BOOLEAN
 
 	// Misc chars
-	LEFT_CURLY        // {
-	RIGHT_CURLY       // }
-	LEFT_PARENTHESIS  // (
-	RIGHT_PARENTHESIS // )
-	COMMA             // ,
-	COLON             // :
+
+	// LEFT_CURLY - {
+	LEFT_CURLY
+
+	// RIGHT_CURLY - }
+	RIGHT_CURLY
+
+	// LEFT_PARENTHESIS - (
+	LEFT_PARENTHESIS
+
+	// RIGHT_PARENTHESIS - )
+	RIGHT_PARENTHESIS
+
+	// COMMA - ,
+	COMMA
+
+	// COLON - :
+	COLON
 )
