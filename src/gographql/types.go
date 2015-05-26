@@ -6,68 +6,71 @@ type QueryArg struct {
 	Value interface{}
 }
 
-// Field represents a field in a block
+// Field represents a field in a Block
 type Field struct {
 	Key   string
 	Model *Model
 }
 
-// Block represents a {} block
+// Block represents a block of Fields
 type Block struct {
 	Fields []*Field
 }
 
-// Model represents a model definition
+// Model represents a model definition complete with a query and a Block
 type Model struct {
 	Block     *Block
 	Key       string
 	QueryArgs []*QueryArg
 }
 
-// Token represents a character
+// Token represents one or several runes matching allowed symbols in GraphQL
 type Token int
 
 const (
-	// ILLEGAL covers all illegal tokens
-	ILLEGAL Token = iota
-	// EOF - end-of-file
+	// Illegal covers all Illegal tokens
+	Illegal Token = iota
+
+	// EOF - end of file
 	EOF
-	// WS - whitespace
+
+	// WS - any whitespace
 	WS
 
 	// Literals
 
-	// IDENT - Identifiers. Can also be booleans in the case of query args
-	IDENT
-	// STRING - string
-	STRING
+	// Ident - Identifiers. Can also be booleans in the case of query args
+	Ident
 
-	// INT - int64
-	INT
+	// String - A string token
+	String
 
-	// FLOAT - float64
-	FLOAT
+	// Int - An int64 token
+	Int
 
-	// BOOLEAN - booleancs
-	BOOLEAN
+	// Float - A float64 token
+	Float
 
-	// Misc chars
+	// Boolean - A boolean token
+	Boolean
 
-	// LEFT_CURLY - {
-	LEFT_CURLY
+	// Misc tokens
 
-	// RIGHT_CURLY - }
-	RIGHT_CURLY
+	// LeftCurly - {
+	LeftCurly
 
-	// LEFT_PARENTHESIS - (
-	LEFT_PARENTHESIS
+	// RightCurly - }
+	RightCurly
 
-	// RIGHT_PARENTHESIS - )
-	RIGHT_PARENTHESIS
+	// LeftParenthesis - (
+	LeftParenthesis
 
-	// COMMA - ,
-	COMMA
+	// RightParenthesis - )
+	RightParenthesis
 
-	// COLON - :
-	COLON
+	// Comma - ,
+	Comma
+
+	// Colon - :
+	Colon
 )

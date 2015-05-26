@@ -9,7 +9,7 @@ import (
 )
 
 // Ensure the parser can parse strings into Statement ASTs.
-func TestParser_ParseStatement(t *testing.T) {
+func TestParser_ParseQuery(t *testing.T) {
 	var tests = []struct {
 		s     string
 		block *ql.Block
@@ -43,7 +43,7 @@ func TestParser_ParseStatement(t *testing.T) {
 			s: `{
         foo,
         bar,
-        user(id:1) {}
+        user(id: 1) {}
 
       }`,
 			block: &ql.Block{Fields: []*ql.Field{
@@ -65,7 +65,7 @@ func TestParser_ParseStatement(t *testing.T) {
 					name,
 					age
 				},
-				store(address:"street", zip:"1337", active:true) {}
+				store(address:"street a", zip: "1337", active:   true) {}
 
       }`,
 			block: &ql.Block{Fields: []*ql.Field{
@@ -82,7 +82,7 @@ func TestParser_ParseStatement(t *testing.T) {
 				&ql.Field{Key: "store", Model: &ql.Model{
 					Key: "store",
 					QueryArgs: []*ql.QueryArg{
-						&ql.QueryArg{Key: "address", Value: "street"},
+						&ql.QueryArg{Key: "address", Value: "street a"},
 						&ql.QueryArg{Key: "zip", Value: "1337"},
 						&ql.QueryArg{Key: "active", Value: true},
 					},
@@ -92,11 +92,11 @@ func TestParser_ParseStatement(t *testing.T) {
 		},
 
 		// Errors
-		{s: `foo`, err: `found "foo", expected LEFT_CURLY`},
-		{s: `{`, err: `found "", expected IDENT`},
-		{s: `{ u`, err: `found "", expected COMMA or RIGHT_CURLY`},
-		{s: `{ foo bar }`, err: `found "bar", expected COMMA or RIGHT_CURLY`},
-		{s: `{ user(id:) }`, err: `found ")", expected BOOLEAN, STRING, INT or FLOAT`},
+		{s: `foo`, err: `found "foo", expected LeftCurly`},
+		{s: `{`, err: `found "", expected Ident`},
+		{s: `{ u`, err: `found "", expected Comma or RightCurly`},
+		{s: `{ foo bar }`, err: `found "bar", expected Comma or RightCurly`},
+		{s: `{ user(id:) }`, err: `found ")", expected Boolean, String, Int or Float`},
 	}
 
 	for i, tt := range tests {

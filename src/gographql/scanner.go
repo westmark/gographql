@@ -22,7 +22,7 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	ch := s.read()
 
 	// If we see whitespace then consume all contiguous whitespace.
-	// If we see a letter then consume as an ident or reserved word.
+	// If we see a letter then consume as an Ident or reserved word.
 	// If we see a digit then consume as a number.
 	if isWhitespace(ch) {
 		s.unread()
@@ -43,20 +43,20 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	case eof:
 		return EOF, ""
 	case '{':
-		return LEFT_CURLY, string(ch)
+		return LeftCurly, string(ch)
 	case '}':
-		return RIGHT_CURLY, string(ch)
+		return RightCurly, string(ch)
 	case '(':
-		return LEFT_PARENTHESIS, string(ch)
+		return LeftParenthesis, string(ch)
 	case ')':
-		return RIGHT_PARENTHESIS, string(ch)
+		return RightParenthesis, string(ch)
 	case ',':
-		return COMMA, string(ch)
+		return Comma, string(ch)
 	case ':':
-		return COLON, string(ch)
+		return Colon, string(ch)
 	}
 
-	return ILLEGAL, string(ch)
+	return Illegal, string(ch)
 }
 
 // scanWhitespace consumes the current rune and all contiguous whitespace.
@@ -81,14 +81,14 @@ func (s *Scanner) scanWhitespace() (tok Token, lit string) {
 	return WS, buf.String()
 }
 
-// scanIdent consumes the current rune and all contiguous ident runes.
+// scanIdent consumes the current rune and all contiguous Ident runes.
 func (s *Scanner) scanIdent() (tok Token, lit string) {
 	// Create a buffer and read the current character into it.
 	var buf bytes.Buffer
 	buf.WriteRune(s.read())
 
-	// Read every subsequent ident character into the buffer.
-	// Non-ident characters and EOF will cause the loop to exit.
+	// Read every subsequent Ident character into the buffer.
+	// Non-Ident characters and EOF will cause the loop to exit.
 	for {
 		if ch := s.read(); ch == eof {
 			break
@@ -100,7 +100,7 @@ func (s *Scanner) scanIdent() (tok Token, lit string) {
 		}
 	}
 
-	return IDENT, buf.String()
+	return Ident, buf.String()
 }
 
 // scanString consumes the current rune and all contiguous runes until a double quote is reached.
@@ -110,7 +110,7 @@ func (s *Scanner) scanString() (tok Token, lit string) {
 
 	ch := s.read()
 	if ch != '"' {
-		return ILLEGAL, string(ch)
+		return Illegal, string(ch)
 	}
 
 	for {
@@ -126,7 +126,7 @@ func (s *Scanner) scanString() (tok Token, lit string) {
 		}
 	}
 
-	return STRING, buf.String()
+	return String, buf.String()
 }
 
 func (s *Scanner) scanNumber() (tok Token, lit string) {
@@ -135,8 +135,8 @@ func (s *Scanner) scanNumber() (tok Token, lit string) {
 	floatingPoint := false
 	buf.WriteRune(s.read())
 
-	// Read every subsequent ident character into the buffer.
-	// Non-ident characters and EOF will cause the loop to exit.
+	// Read every subsequent Ident character into the buffer.
+	// Non-Ident characters and EOF will cause the loop to exit.
 	for {
 		if ch := s.read(); ch == eof {
 			break
@@ -152,10 +152,10 @@ func (s *Scanner) scanNumber() (tok Token, lit string) {
 	}
 
 	if floatingPoint {
-		return FLOAT, buf.String()
+		return Float, buf.String()
 	}
 
-	return INT, buf.String()
+	return Int, buf.String()
 }
 
 // read reads the next rune from the bufferred reader.

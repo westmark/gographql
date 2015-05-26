@@ -14,29 +14,29 @@ func TestScanner_Scan(t *testing.T) {
 		tok ql.Token
 		lit interface{}
 	}{
-		// Special tokens (EOF, ILLEGAL, WS)
+		// Special tokens (EOF, Illegal, WS)
 		{s: ``, tok: ql.EOF, lit: ""},
-		{s: `#`, tok: ql.ILLEGAL, lit: `#`},
+		{s: `#`, tok: ql.Illegal, lit: `#`},
 		{s: ` `, tok: ql.WS, lit: " "},
 		{s: "\t", tok: ql.WS, lit: "\t"},
 		{s: "\n", tok: ql.WS, lit: "\n"},
 
 		// Misc characters
-		{s: `{`, tok: ql.LEFT_CURLY, lit: "{"},
-		{s: `}`, tok: ql.RIGHT_CURLY, lit: "}"},
-		{s: `(`, tok: ql.LEFT_PARENTHESIS, lit: "("},
-		{s: `)`, tok: ql.RIGHT_PARENTHESIS, lit: ")"},
-		{s: `:`, tok: ql.COLON, lit: ":"},
+		{s: `{`, tok: ql.LeftCurly, lit: "{"},
+		{s: `}`, tok: ql.RightCurly, lit: "}"},
+		{s: `(`, tok: ql.LeftParenthesis, lit: "("},
+		{s: `)`, tok: ql.RightParenthesis, lit: ")"},
+		{s: `:`, tok: ql.Colon, lit: ":"},
 
 		// Identifiers
-		{s: `foo`, tok: ql.IDENT, lit: `foo`},
-		{s: `Zx12_3U_-`, tok: ql.IDENT, lit: `Zx12_3U_`},
+		{s: `foo`, tok: ql.Ident, lit: `foo`},
+		{s: `Zx12_3U_-`, tok: ql.Ident, lit: `Zx12_3U_`},
 
-		{s: `"foo"`, tok: ql.STRING, lit: `foo`},
+		{s: `"foo"`, tok: ql.String, lit: `foo`},
 
-		{s: `20`, tok: ql.INT, lit: "20"},
+		{s: `20`, tok: ql.Int, lit: "20"},
 
-		{s: `20.5`, tok: ql.FLOAT, lit: "20.5"},
+		{s: `20.5`, tok: ql.Float, lit: "20.5"},
 
 		// Keywords
 	}

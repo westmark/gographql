@@ -56,42 +56,42 @@ func (p *Parser) parseQueryArgs() ([]*QueryArg, error) {
 	var queryArgs []*QueryArg
 	var err error
 
-	if tok, lit := p.scanIgnoreWhitespace(); tok != LEFT_PARENTHESIS {
-		return nil, fmt.Errorf("found %q, expected LEFT_PARENTHESIS", lit)
+	if tok, lit := p.scanIgnoreWhitespace(); tok != LeftParenthesis {
+		return nil, fmt.Errorf("found %q, expected LeftParenthesis", lit)
 	}
 
 	for {
 		tok, lit := p.scanIgnoreWhitespace()
-		if tok != IDENT {
-			return nil, fmt.Errorf("found %q, expected IDENT", lit)
+		if tok != Ident {
+			return nil, fmt.Errorf("found %q, expected Ident", lit)
 		}
 
 		key := lit
 
-		if tok, lit := p.scanIgnoreWhitespace(); tok != COLON {
-			return nil, fmt.Errorf("found %q, expected COLON", lit)
+		if tok, lit := p.scanIgnoreWhitespace(); tok != Colon {
+			return nil, fmt.Errorf("found %q, expected Colon", lit)
 		}
 
 		tok, lit = p.scanIgnoreWhitespace()
-		if tok != IDENT && tok != STRING && tok != INT && tok != FLOAT {
-			return nil, fmt.Errorf("found %q, expected BOOLEAN, STRING, INT or FLOAT", lit)
+		if tok != Ident && tok != String && tok != Int && tok != Float {
+			return nil, fmt.Errorf("found %q, expected Boolean, String, Int or Float", lit)
 		}
 
 		var value interface{}
 		value = lit
 
 		err = nil
-		if tok == IDENT {
+		if tok == Ident {
 			if lit == "true" {
 				value = true
 			} else if lit == "false" {
 				value = false
 			} else {
-				return nil, fmt.Errorf("found %q, expected BOOLEAN, STRING, INT or FLOAT", lit)
+				return nil, fmt.Errorf("found %q, expected Boolean, String, Int or Float", lit)
 			}
-		} else if tok == INT {
+		} else if tok == Int {
 			value, err = strconv.ParseInt(lit, 10, 64)
-		} else if tok == FLOAT {
+		} else if tok == Float {
 			value, err = strconv.ParseFloat(lit, 64)
 		}
 
@@ -101,14 +101,14 @@ func (p *Parser) parseQueryArgs() ([]*QueryArg, error) {
 
 		queryArgs = append(queryArgs, &QueryArg{key, value})
 
-		if tok, _ := p.scanIgnoreWhitespace(); tok != COMMA {
+		if tok, _ := p.scanIgnoreWhitespace(); tok != Comma {
 			p.unscan()
 			break
 		}
 	}
 
-	if tok, lit := p.scanIgnoreWhitespace(); tok != RIGHT_PARENTHESIS {
-		return nil, fmt.Errorf("found %q, expected RIGHT_PARENTHESIS", lit)
+	if tok, lit := p.scanIgnoreWhitespace(); tok != RightParenthesis {
+		return nil, fmt.Errorf("found %q, expected RightParenthesis", lit)
 	}
 
 	return queryArgs, nil
@@ -120,8 +120,8 @@ func (p *Parser) parseField() (*Field, error) {
 	var err error
 
 	tok, lit := p.scanIgnoreWhitespace()
-	if tok != IDENT {
-		return nil, fmt.Errorf("found %q, expected IDENT", lit)
+	if tok != Ident {
+		return nil, fmt.Errorf("found %q, expected Ident", lit)
 	}
 
 	field.Key = lit
@@ -129,7 +129,7 @@ func (p *Parser) parseField() (*Field, error) {
 	tok, lit = p.scanIgnoreWhitespace()
 	p.unscan()
 
-	if tok != LEFT_PARENTHESIS {
+	if tok != LeftParenthesis {
 		return field, nil
 	}
 
@@ -142,7 +142,7 @@ func (p *Parser) parseField() (*Field, error) {
 
 	tok, lit = p.scanIgnoreWhitespace()
 	p.unscan()
-	if tok == LEFT_CURLY {
+	if tok == LeftCurly {
 		field.Model.Block, err = p.parseBlock()
 		if err != nil {
 			return nil, err
@@ -160,16 +160,16 @@ func (p *Parser) parseBlock() (*Block, error) {
 	var tok Token
 	var lit string
 
-	if tok, lit = p.scanIgnoreWhitespace(); tok != LEFT_CURLY {
-		return nil, fmt.Errorf("found %q, expected LEFT_CURLY", lit)
+	if tok, lit = p.scanIgnoreWhitespace(); tok != LeftCurly {
+		return nil, fmt.Errorf("found %q, expected LeftCurly", lit)
 	}
 
 	tok, _ = p.scanIgnoreWhitespace()
-	if tok != RIGHT_CURLY {
+	if tok != RightCurly {
 		p.unscan()
 	}
 
-	for tok != RIGHT_CURLY {
+	for tok != RightCurly {
 		field, err := p.parseField()
 
 		if err != nil {
@@ -178,8 +178,8 @@ func (p *Parser) parseBlock() (*Block, error) {
 
 		block.Fields = append(block.Fields, field)
 		tok, lit = p.scanIgnoreWhitespace()
-		if tok != COMMA && tok != RIGHT_CURLY {
-			return nil, fmt.Errorf("found %q, expected COMMA or RIGHT_CURLY", lit)
+		if tok != Comma && tok != RightCurly {
+			return nil, fmt.Errorf("found %q, expected Comma or RightCurly", lit)
 		}
 	}
 
